@@ -15,6 +15,7 @@ Modern development practices and project structure.
 Core Functionality
 
 ✅ Product Management: CRUD operations for products with validation
+
 ✅ Supplier Management: Supplier information and relationships
 
 ✅ Category Management: Product categorization system
