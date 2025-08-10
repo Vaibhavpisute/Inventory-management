@@ -4,17 +4,12 @@ A comprehensive inventory management system built with FastAPI and MySQL, demons
 
 This project is designed for interview demonstrations and showcases:
 
-Python OOP concepts with clean class design
-
-Advanced SQL operations (JOINs, Views, Indexes, Subqueries)
-
-FastAPI framework with comprehensive API documentation
-
-Database design with proper relationships and constraints
-
-Exception handling and error management
-
-Modern development practices and project structure
+Python OOP concepts with clean class design.
+Advanced SQL operations (JOINs, Views, Indexes, Subqueries).
+FastAPI framework with comprehensive API documentation.
+Database design with proper relationships and constraints.
+Exception handling and error management.
+Modern development practices and project structure.
 
 🚀 Features
 Core Functionality
