@@ -1,6 +1,5 @@
 USE inventory_db;
 
--- Create suppliers table
 CREATE TABLE suppliers (
     supplier_id INT PRIMARY KEY AUTO_INCREMENT,
     supplier_name VARCHAR(100) NOT NULL,
@@ -12,7 +11,6 @@ CREATE TABLE suppliers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create categories table
 CREATE TABLE categories (
     category_id INT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL UNIQUE,
@@ -21,7 +19,6 @@ CREATE TABLE categories (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create products table
 CREATE TABLE products (
     product_id INT PRIMARY KEY AUTO_INCREMENT,
     product_name VARCHAR(100) NOT NULL,
@@ -40,7 +37,6 @@ CREATE TABLE products (
     FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id) ON DELETE SET NULL
 );
 
--- Create stock_movements table for tracking inventory changes
 CREATE TABLE stock_movements (
     movement_id INT PRIMARY KEY AUTO_INCREMENT,
     product_id INT NOT NULL,
