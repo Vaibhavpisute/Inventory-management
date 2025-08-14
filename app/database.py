@@ -1,8 +1,3 @@
-"""
-Database manager class demonstrating proper database connection handling,
-advanced SQL operations, and exception management.
-"""
-
 import mysql.connector
 from mysql.connector import Error
 from typing import List, Dict, Any, Optional, Tuple
@@ -18,10 +13,8 @@ from .exceptions import (
     DuplicateProductCodeError, SupplierNotFoundError, CategoryNotFoundError
 )
 
-# Load environment variables
 load_dotenv()
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -83,7 +76,6 @@ class DatabaseManager:
             if cursor:
                 cursor.close()
     
-    # SUPPLIER OPERATIONS
     def create_supplier(self, supplier: Supplier) -> int:
         """Create a new supplier and return the ID"""
         supplier.validate()
@@ -112,19 +104,16 @@ class DatabaseManager:
         """Get all suppliers with pagination"""
         offset = (page - 1) * size
         
-        # Get total count
         count_query = "SELECT COUNT(*) as total FROM suppliers"
         total_result = self._execute_query(count_query)
         total = total_result[0]['total']
         
-        # Get paginated results
         query = "SELECT * FROM suppliers ORDER BY supplier_name LIMIT %s OFFSET %s"
         results = self._execute_query(query, (size, offset))
         
         suppliers = [Supplier(**row) for row in results]
         return suppliers, total
     
-    # CATEGORY OPERATIONS
     def create_category(self, category: Category) -> int:
         """Create a new category and return the ID"""
         category.validate()
@@ -154,12 +143,10 @@ class DatabaseManager:
         results = self._execute_query(query)
         return [Category(**row) for row in results]
     
-    # PRODUCT OPERATIONS WITH ADVANCED SQL
     def create_product(self, product: Product) -> int:
         """Create a new product with duplicate code checking"""
         product.validate()
         
-        # Check for duplicate product code using sub-query
         check_query = """
         SELECT COUNT(*) as count FROM products 
         WHERE product_code = %s AND product_id != COALESCE(%s, 0)
@@ -234,7 +221,6 @@ class DatabaseManager:
         
         where_clause = " AND ".join(conditions)
         
-        # Count query with same conditions
         count_query = f"""
         SELECT COUNT(*) as total 
         FROM products p
@@ -246,7 +232,6 @@ class DatabaseManager:
         total_result = self._execute_query(count_query, tuple(params))
         total = total_result[0]['total']
         
-        # Main query with pagination
         offset = (page - 1) * size
         query = f"""
         SELECT p.*, c.category_name, s.supplier_name, s.contact_person as supplier_contact,
@@ -271,7 +256,7 @@ class DatabaseManager:
     
     def update_product_stock(self, product_id: int, new_stock: int) -> bool:
         """Update product stock with validation"""
-        # First check if product exists and get current stock
+
         product = self.get_product_by_id(product_id)
         
         if new_stock < 0:
@@ -292,15 +277,12 @@ class DatabaseManager:
         movement.validate()
         
         try:
-            # Start transaction
             self.connection.autocommit = False
             
-            # Get current product stock
             product = self.get_product_by_id(movement.product_id)
             stock_change = movement.get_stock_change()
             new_stock = product.current_stock + stock_change
             
-            # Validate stock won't go negative
             if new_stock < 0:
                 raise InsufficientStockError(
                     product.product_name, 
@@ -308,7 +290,6 @@ class DatabaseManager:
                     abs(stock_change)
                 )
             
-            # Insert stock movement
             movement_query = """
             INSERT INTO stock_movements 
             (product_id, movement_type, quantity, unit_price, reference_number, notes, created_by)
@@ -323,10 +304,8 @@ class DatabaseManager:
             result = self._execute_query(movement_query, movement_params, fetch=False)
             movement_id = result[0]["last_insert_id"]
             
-            # Update product stock
             self.update_product_stock(movement.product_id, new_stock)
             
-            # Commit transaction
             self.connection.commit()
             return movement_id
             
@@ -349,12 +328,10 @@ class DatabaseManager:
         if conditions:
             where_clause = "WHERE " + " AND ".join(conditions)
         
-        # Count query
         count_query = f"SELECT COUNT(*) as total FROM stock_movements sm {where_clause}"
         total_result = self._execute_query(count_query, tuple(params))
         total = total_result[0]['total']
         
-        # Main query with JOIN
         offset = (page - 1) * size
         query = f"""
         SELECT sm.*, p.product_name, p.product_code
@@ -370,7 +347,6 @@ class DatabaseManager:
         
         return results, total
     
-    # ADVANCED SQL FEATURES - VIEWS AND ANALYTICS
     def get_low_stock_alerts(self) -> List[Dict]:
         """Get low stock alerts using database VIEW"""
         query = "SELECT * FROM low_stock_alert ORDER BY shortage_quantity DESC"
