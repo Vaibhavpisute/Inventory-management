@@ -1,8 +1,3 @@
-"""
-Custom exception classes for the Inventory Management API.
-Demonstrates proper exception handling patterns in Python.
-"""
-
 class InventoryException(Exception):
     """Base exception class for inventory-related errors"""
     def __init__(self, message: str, error_code: str = None):
