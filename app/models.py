@@ -1,8 +1,3 @@
-"""
-Database models using Object-Oriented Programming principles.
-Demonstrates clean OOP design with proper encapsulation and methods.
-"""
-
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
@@ -161,7 +156,7 @@ class StockMovement:
     """Stock movement model for tracking inventory changes"""
     movement_id: Optional[int] = None
     product_id: int = 0
-    movement_type: str = ""  # 'IN', 'OUT', 'ADJUSTMENT'
+    movement_type: str = ""  
     quantity: int = 0
     unit_price: Optional[Decimal] = None
     reference_number: Optional[str] = None
