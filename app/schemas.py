@@ -1,8 +1,3 @@
-"""
-Pydantic schemas for request/response validation.
-Demonstrates proper API data validation and serialization.
-"""
-
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 from decimal import Decimal
@@ -19,7 +14,6 @@ class StockStatus(str, Enum):
     NORMAL = "Normal"
     OVERSTOCK = "Overstock"
 
-# Supplier Schemas
 class SupplierBase(BaseModel):
     supplier_name: str = Field(..., min_length=1, max_length=100, description="Supplier name")
     contact_person: Optional[str] = Field(None, max_length=100, description="Contact person name")
@@ -51,7 +45,6 @@ class SupplierResponse(SupplierBase):
     class Config:
         from_attributes = True
 
-# Category Schemas
 class CategoryBase(BaseModel):
     category_name: str = Field(..., min_length=1, max_length=50, description="Category name")
     description: Optional[str] = Field(None, description="Category description")
@@ -71,7 +64,6 @@ class CategoryResponse(CategoryBase):
     class Config:
         from_attributes = True
 
-# Product Schemas
 class ProductBase(BaseModel):
     product_name: str = Field(..., min_length=1, max_length=100, description="Product name")
     product_code: str = Field(..., min_length=1, max_length=50, description="Unique product code")
@@ -119,7 +111,6 @@ class ProductSummaryResponse(ProductResponse):
     supplier_name: Optional[str] = None
     supplier_contact: Optional[str] = None
 
-# Stock Movement Schemas
 class StockMovementBase(BaseModel):
     product_id: int = Field(..., description="Product ID")
     movement_type: MovementType = Field(..., description="Type of stock movement")
@@ -139,15 +130,13 @@ class StockMovementResponse(StockMovementBase):
     
     class Config:
         from_attributes = True
-
-# Quick Stock Update Schema
+        
 class StockUpdateRequest(BaseModel):
     product_id: int = Field(..., description="Product ID")
     quantity: int = Field(..., description="Quantity to add (positive) or remove (negative)")
     reference_number: Optional[str] = Field(None, description="Reference number")
     notes: Optional[str] = Field(None, description="Notes for the movement")
 
-# Response Schemas
 class LowStockAlert(BaseModel):
     product_id: int
     product_name: str
