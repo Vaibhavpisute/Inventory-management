@@ -1,9 +1,3 @@
-"""
-FastAPI main application file.
-Demonstrates comprehensive API development with proper error handling,
-documentation, and RESTful design principles.
-"""
-
 from fastapi import FastAPI, HTTPException, Query, Path, Depends
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,11 +23,9 @@ from .exceptions import (
     InsufficientStockError, DuplicateProductCodeError
 )
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Inventory Management API",
     description="A comprehensive inventory management system built with FastAPI and MySQL",
@@ -42,16 +34,14 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure this properly for production
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Global database manager instance
 db_manager = None
 
 @app.on_event("startup")
@@ -79,7 +69,6 @@ def get_db_manager() -> DatabaseManager:
         raise HTTPException(status_code=500, detail="Database not initialized")
     return db_manager
 
-# Custom exception handlers
 @app.exception_handler(InventoryException)
 async def inventory_exception_handler(request, exc: InventoryException):
     """Handle custom inventory exceptions"""
@@ -116,7 +105,6 @@ async def value_error_handler(request, exc: ValueError):
         }
     )
 
-# Root endpoint
 @app.get("/", response_model=APIResponse)
 async def root():
     """Welcome endpoint with API information"""
@@ -134,7 +122,6 @@ async def root():
 async def health_check(db: DatabaseManager = Depends(get_db_manager)):
     """Health check endpoint"""
     try:
-        # Test database connection
         db._ensure_connection()
         return {
             "status": "healthy",
@@ -152,7 +139,6 @@ async def health_check(db: DatabaseManager = Depends(get_db_manager)):
             }
         )
 
-# SUPPLIER ENDPOINTS
 @app.post("/suppliers/", response_model=APIResponse, status_code=201)
 async def create_supplier(
     supplier_data: SupplierCreate,
@@ -207,7 +193,6 @@ async def get_supplier(
         logger.error(f"Error fetching supplier {supplier_id}: {e}")
         raise e
 
-# CATEGORY ENDPOINTS
 @app.post("/categories/", response_model=APIResponse, status_code=201)
 async def create_category(
     category_data: CategoryCreate,
@@ -250,7 +235,6 @@ async def get_category(
         logger.error(f"Error fetching category {category_id}: {e}")
         raise e
 
-# PRODUCT ENDPOINTS
 @app.post("/products/", response_model=APIResponse, status_code=201)
 async def create_product(
     product_data: ProductCreate,
@@ -322,10 +306,8 @@ async def update_product_stock(
 ):
     """Update product stock with automatic stock movement creation"""
     try:
-        # Get current product
         product = db.get_product_by_id(product_id)
         
-        # Determine movement type based on quantity
         if stock_update.quantity > 0:
             movement_type = "IN"
             quantity = stock_update.quantity
@@ -333,7 +315,6 @@ async def update_product_stock(
             movement_type = "OUT"
             quantity = abs(stock_update.quantity)
         
-        # Create stock movement
         movement = StockMovement(
             product_id=product_id,
             movement_type=movement_type,
@@ -346,7 +327,6 @@ async def update_product_stock(
         
         movement_id = db.create_stock_movement(movement)
         
-        # Get updated product
         updated_product = db.get_product_by_id(product_id)
         
         return APIResponse(
@@ -363,7 +343,6 @@ async def update_product_stock(
         logger.error(f"Error updating stock for product {product_id}: {e}")
         raise e
 
-# STOCK MOVEMENT ENDPOINTS
 @app.post("/stock-movements/", response_model=APIResponse, status_code=201)
 async def create_stock_movement(
     movement_data: StockMovementCreate,
@@ -406,7 +385,6 @@ async def get_stock_movements(
         logger.error(f"Error fetching stock movements: {e}")
         raise e
 
-# ANALYTICS AND REPORTING ENDPOINTS
 @app.get("/analytics/low-stock-alerts", response_model=List[LowStockAlert])
 async def get_low_stock_alerts(db: DatabaseManager = Depends(get_db_manager)):
     """Get products with low stock using database view"""
@@ -450,7 +428,6 @@ async def get_monthly_report(
         logger.error(f"Error generating monthly report: {e}")
         raise e
 
-# DEMO/TEST ENDPOINTS
 @app.get("/demo/sample-queries")
 async def demo_sample_queries(db: DatabaseManager = Depends(get_db_manager)):
     """Demonstrate various SQL queries for interview purposes"""
