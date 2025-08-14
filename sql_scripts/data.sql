@@ -1,13 +1,11 @@
 USE inventory_db;
 
--- Insert sample suppliers
 INSERT INTO suppliers (supplier_name, contact_person, email, phone, address) VALUES
 ('TechWorld Suppliers', 'John Smith', 'john@techworld.com', '+1-555-0101', '123 Tech Street, Silicon Valley, CA'),
 ('Global Electronics', 'Sarah Johnson', 'sarah@globalelec.com', '+1-555-0102', '456 Circuit Ave, Austin, TX'),
 ('Office Solutions Ltd', 'Mike Wilson', 'mike@officesol.com', '+1-555-0103', '789 Business Blvd, New York, NY'),
 ('Mobile Distributors', 'Lisa Chen', 'lisa@mobiledist.com', '+1-555-0104', '321 Mobile Lane, Los Angeles, CA');
 
--- Insert sample categories
 INSERT INTO categories (category_name, description) VALUES
 ('Laptops', 'Portable computers for personal and business use'),
 ('Smartphones', 'Mobile phones with advanced computing capabilities'),
@@ -15,7 +13,6 @@ INSERT INTO categories (category_name, description) VALUES
 ('Accessories', 'Computer and mobile device accessories'),
 ('Office Equipment', 'General office and business equipment');
 
--- Insert sample products
 INSERT INTO products (product_name, product_code, category_id, supplier_id, unit_price, current_stock, minimum_stock, maximum_stock, description) VALUES
 ('MacBook Pro 16"', 'MBP16-001', 1, 1, 2499.99, 15, 5, 50, 'High-performance laptop with M2 chip'),
 ('Dell XPS 13', 'DELL-XPS13', 1, 1, 1299.99, 8, 10, 30, 'Ultra-portable business laptop'),
@@ -28,7 +25,6 @@ INSERT INTO products (product_name, product_code, category_id, supplier_id, unit
 ('Bluetooth Headphones', 'BT-HP-001', 4, 2, 199.99, 18, 12, 60, 'Noise-cancelling wireless headphones'),
 ('Office Printer', 'PRT-OFF-01', 5, 3, 299.99, 5, 8, 20, 'Multi-function office printer');
 
--- Insert sample stock movements
 INSERT INTO stock_movements (product_id, movement_type, quantity, unit_price, reference_number, notes) VALUES
 (1, 'IN', 20, 2499.99, 'PO-2024-001', 'Initial stock purchase'),
 (2, 'IN', 15, 1299.99, 'PO-2024-002', 'Initial stock purchase'),
@@ -41,7 +37,6 @@ INSERT INTO stock_movements (product_id, movement_type, quantity, unit_price, re
 (4, 'OUT', 13, 899.99, 'SO-2024-004', 'Bulk order fulfillment'),
 (5, 'OUT', 10, 599.99, 'SO-2024-005', 'Education sector sales');
 
--- Update current stock based on movements
 UPDATE products SET current_stock = (
     SELECT COALESCE(
         (SELECT SUM(CASE 
@@ -56,7 +51,6 @@ UPDATE products SET current_stock = (
 
 SELECT 'Sample data inserted successfully!' as message;
 
--- Show summary of inserted data
 SELECT 'Suppliers' as table_name, COUNT(*) as record_count FROM suppliers
 UNION ALL
 SELECT 'Categories', COUNT(*) FROM categories
