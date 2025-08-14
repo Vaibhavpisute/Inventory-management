@@ -1,6 +1,5 @@
 USE inventory_db;
 
--- Create low_stock_alert view
 CREATE VIEW low_stock_alert AS
 SELECT 
     p.product_id,
@@ -20,7 +19,6 @@ WHERE p.current_stock <= p.minimum_stock
 AND p.is_active = TRUE
 ORDER BY shortage_quantity DESC;
 
--- Create product_summary view with complete information
 CREATE VIEW product_summary AS
 SELECT 
     p.product_id,
@@ -46,7 +44,6 @@ FROM products p
 LEFT JOIN categories c ON p.category_id = c.category_id
 LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id;
 
--- Create monthly stock movement summary view
 CREATE VIEW monthly_stock_summary AS
 SELECT 
     DATE_FORMAT(sm.movement_date, '%Y-%m') as month_year,
